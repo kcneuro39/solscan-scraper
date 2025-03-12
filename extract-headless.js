@@ -162,8 +162,8 @@ async function extractTransactionLinks() {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'kyle.txma@gmail.com',
-        pass: 'kbumxukhrxlhzoqp' // Your app password
+        user: process.env.EMAIL_USER, // Use environment variable
+        pass: process.env.EMAIL_PASS  // Use environment variable
       }
     });
     
