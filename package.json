@@ -1,0 +1,16 @@
+{
+  "name": "solscan-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "extract-headless.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemailer": "^6.10.0",
+    "puppeteer": "^24.4.0"
+  }
+}
