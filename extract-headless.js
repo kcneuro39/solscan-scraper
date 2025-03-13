@@ -23,7 +23,6 @@ async function extractTransactionLinks() {
     'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=initializeCustomizablePermissionlessLbPair',
     'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=initializeBinArrayBitmapExtension',
     'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=updatePositionOperator',
-    'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=swapWithPriceImpact',
     'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=withdrawProtocolFee',
     'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=initializeReward',
     'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=fundReward',
@@ -55,7 +54,7 @@ async function extractTransactionLinks() {
     
     let seenTransactions = new Set();
     
-    for (let pageNum = 1; pageNum <= 3; pageNum++) {
+    for (let pageNum = 1; pageNum <= 2; pageNum++) {
       console.log(`Processing page ${pageNum} for ${instruction}...`);
       
       // Wait for transaction links to load (with timeout handling)
@@ -94,7 +93,7 @@ async function extractTransactionLinks() {
       });
       
       // If not the last page, try to go to next page
-      if (pageNum < 3) {
+      if (pageNum < 2) {
         console.log('Attempting to click next page button...');
         const nextButtonSelector = 'button.inline-flex path[d="m9 18 6-6-6-6"]';
         
