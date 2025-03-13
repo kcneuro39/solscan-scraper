@@ -2,7 +2,7 @@ name: Solscan Scraper
 
 on:
   schedule:
-    - cron: '0 * * * *' # Runs every hour at minute 0
+    - cron: '0 */2 * * *' # Runs every 2 hours
   workflow_dispatch: # Allows manual triggering
 
 jobs:
@@ -16,18 +16,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20' # Latest LTS version as of March 2025
-          cache: 'npm' # Cache npm dependencies
 
       - name: Install dependencies
-        run: npm ci # Use npm ci for faster, deterministic installs
-
-      - name: Cache Puppeteer dependencies
-        uses: actions/cache@v3
-        with:
-          path: /usr/lib # Cache system libraries
-          key: ${{ runner.os }}-puppeteer-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-puppeteer-
+        run: npm install
 
       - name: Install Puppeteer dependencies
         run: |
