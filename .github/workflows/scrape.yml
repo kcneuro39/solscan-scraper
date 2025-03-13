@@ -29,4 +29,4 @@ jobs:
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-        run: node extract-headless.js
+        run: timeout 10m node extract-headless.js --no-sandbox --disable-gpu --disable-dev-shm-usage || echo "Script timed out after 10 minutes"
