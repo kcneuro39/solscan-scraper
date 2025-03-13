@@ -69,7 +69,7 @@ async function extractTransactionLinks() {
     
     let seenTransactions = new Set();
     
-    for (let pageNum = 1; pageNum <= 2; pageNum++) { // Changed to 2 pages
+    for (let pageNum = 1; pageNum <= 2; pageNum++) {
       console.log(`Processing page ${pageNum} for ${instruction}...`);
       
       // Wait for transaction links to load (with timeout handling)
@@ -91,8 +91,8 @@ async function extractTransactionLinks() {
         });
       });
       
-      // Filter out duplicates using our Set
-      const newLinks = transactionLinks.filter(tx => !seenTransactions.has(tx.transactionId));
+      // Filter out duplicates using our Set and previously seen transactions
+      const newLinks = transactionLinks.filter(tx => !seenTransactions.has(tx.transactionId) && !previouslySeenTransactions.has(tx.transactionId));
       
       console.log(`Found ${transactionLinks.length} transactions on page ${pageNum}, ${newLinks.length} are new`);
       
@@ -107,8 +107,14 @@ async function extractTransactionLinks() {
         seenTransactions.add(tx.transactionId);
       });
       
+      // Break if no new transactions were found on this page
+      if (newLinks.length === 0) {
+        console.log(`No new transactions on page ${pageNum} for ${instruction}, skipping remaining pages...`);
+        break;
+      }
+      
       // If not the last page, try to go to next page
-      if (pageNum < 2) { // Changed to 2 pages
+      if (pageNum < 2) {
         console.log('Attempting to click next page button...');
         const nextButtonSelector = 'button.inline-flex path[d="m9 18 6-6-6-6"]';
         
@@ -134,7 +140,7 @@ async function extractTransactionLinks() {
   // Close the browser
   await browser.close();
   
-  // Filter out previously seen transactions
+  // Filter out previously seen transactions (redundant now, but kept for safety)
   const newTransactionLinks = allTransactionLinks.filter(
     tx => !previouslySeenTransactions.has(tx.transactionId)
   );
