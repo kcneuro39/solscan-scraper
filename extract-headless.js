@@ -207,4 +207,3 @@ async function runScheduledTask() {
 
 // Run immediately once, then every hour
 runScheduledTask();
-setInterval(runScheduledTask, 60 * 60 * 1000); // 60 minutes * 60 seconds * 1000 milliseconds
