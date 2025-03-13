@@ -8,10 +8,25 @@ async function extractTransactionLinks() {
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
-  
+
+  // Load previously seen transactions at the start
+  const seenFilePath = 'seen-transactions.json';
+  let previouslySeenTransactions = new Set();
+  try {
+    const data = await fs.readFile(seenFilePath, 'utf8');
+    previouslySeenTransactions = new Set(JSON.parse(data));
+    console.log(`Loaded ${previouslySeenTransactions.size} previously seen transactions`);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.log('No previous transactions file found, starting fresh');
+    } else {
+      console.error('Error loading seen transactions:', error);
+    }
+  }
+
   const page = await browser.newPage();
   
-  // List of URLs to process
+  // List of URLs to process (removed swapWithPriceImpact)
   const urls = [
     'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=initializePositionByOperator',
     'https://solscan.io/account/LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo?instruction=initializePermissionLbPair',
@@ -54,7 +69,7 @@ async function extractTransactionLinks() {
     
     let seenTransactions = new Set();
     
-    for (let pageNum = 1; pageNum <= 2; pageNum++) {
+    for (let pageNum = 1; pageNum <= 2; pageNum++) { // Changed to 2 pages
       console.log(`Processing page ${pageNum} for ${instruction}...`);
       
       // Wait for transaction links to load (with timeout handling)
@@ -93,7 +108,7 @@ async function extractTransactionLinks() {
       });
       
       // If not the last page, try to go to next page
-      if (pageNum < 2) {
+      if (pageNum < 2) { // Changed to 2 pages
         console.log('Attempting to click next page button...');
         const nextButtonSelector = 'button.inline-flex path[d="m9 18 6-6-6-6"]';
         
@@ -118,21 +133,6 @@ async function extractTransactionLinks() {
   
   // Close the browser
   await browser.close();
-  
-  // Load previously seen transactions from file
-  const seenFilePath = 'seen-transactions.json';
-  let previouslySeenTransactions = new Set();
-  try {
-    const data = await fs.readFile(seenFilePath, 'utf8');
-    previouslySeenTransactions = new Set(JSON.parse(data));
-    console.log(`Loaded ${previouslySeenTransactions.size} previously seen transactions`);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      console.log('No previous transactions file found, starting fresh');
-    } else {
-      console.error('Error loading seen transactions:', error);
-    }
-  }
   
   // Filter out previously seen transactions
   const newTransactionLinks = allTransactionLinks.filter(
@@ -179,10 +179,10 @@ async function extractTransactionLinks() {
       await transporter.sendMail(mailOptions);
       console.log(`Email sent successfully with ${newTransactionLinks.length} new transactions`);
       
-      // Update the seen transactions file with all transactions from this run
+      // Update the seen transactions file with only new transactions
       const updatedSeenTransactions = new Set([
         ...previouslySeenTransactions,
-        ...allTransactionLinks.map(tx => tx.transactionId)
+        ...newTransactionLinks.map(tx => tx.transactionId)
       ]);
       await fs.writeFile(seenFilePath, JSON.stringify([...updatedSeenTransactions]), 'utf8');
       console.log(`Updated seen transactions file with ${updatedSeenTransactions.size} total entries`);
@@ -204,5 +204,5 @@ async function runScheduledTask() {
   }
 }
 
-// Run immediately once, then every hour
+// Run immediately once
 runScheduledTask();
